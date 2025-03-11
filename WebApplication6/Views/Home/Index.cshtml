@@ -1,0 +1,76 @@
+﻿@model List<WebApplication6.Models.User>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<form asp-action="Index" method="get" class="mb-3 d-flex">
+    <input type="text" name="searchQuery" class="form-control me-2" placeholder="Search by username" value="@ViewBag.SearchQuery" />
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Password</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <form asp-action="UpdateUser" method="POST">
+            <tr>
+                <input type="hidden" name="id" value="@user.Id">
+                <td>@user.Id</td>
+                <td>@user.Username</td>
+                <td><input type="text" name="password" value="@user.Password" class="form-control" /></td>
+                <td>
+                    <input type="submit" value="Update" class="btn btn-outline-primary" />
+                    <a asp-action="DeleteUser" asp-route-id="@user.Id" class="btn btn-outline-danger">Delete</a>
+                </td>
+            </tr>
+            </form>
+        }
+        <form asp-action="InsertUser" method="POST">
+        <tr>
+            <td></td>
+            <td><input type="text" class="form-control" placeholder="Username" name="username" required /></td>
+            <td><input type="password" class="form-control" placeholder="Password" name="password" required /></td>
+            <td><input type="submit" value="Submit" class="btn btn-outline-success" /></td>
+        </tr>
+        </form>
+    </tbody>
+</table>
+
+<!-- Pagination Controls -->
+<nav>
+    <ul class="pagination justify-content-center">
+        @if (ViewBag.CurrentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)">Previous</a>
+            </li>
+        }
+
+        @for (var i = 1; i <= ViewBag.TotalPages; i++)
+        {
+            <li class="page-item @(ViewBag.CurrentPage == i ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+            </li>
+        }
+
+        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)">Next</a>
+            </li>
+        }
+    </ul>
+</nav>
+<form asp-action="Logout" method="post" class="d-flex justify-content-center mt-3">
+    <button type="submit" class="btn btn-danger">Logout</button>
+</form>
